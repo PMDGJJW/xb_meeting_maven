@@ -3,12 +3,16 @@ package com.entity;
 /**
  * @auth jian j w
  * @date 2020/3/19 10:31
- * @Description
+ * @Description 部门类
  */
 public class Dept extends BaseEntity {
+    //部门ID
     private Integer id;
+    //部门名称
     private String name;
+    //部门人数
     private Integer count;
+
     public Integer getId() {
         return id;
     }

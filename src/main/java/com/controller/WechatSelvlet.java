@@ -21,7 +21,7 @@ import java.util.UUID;
 /**
  * @auth jian j w
  * @date 2020/3/20 11:46
- * @Description
+ * @Description 微信登录
  */
 @WebServlet("/weChat/*")
 public class WechatSelvlet extends BaseServlet {
@@ -71,6 +71,7 @@ public class WechatSelvlet extends BaseServlet {
 
         url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + info.getString("access_token") +
                 "&openid=" + info.getString("openid");
+
         //通过access_token和openid获取微信的用户信息（昵称，性别，头像...）
         JSONObject userInfo = userService.getJsonObject(url);
         String openid =(userInfo.getString("openid"));
@@ -78,11 +79,17 @@ public class WechatSelvlet extends BaseServlet {
         String realName=(userInfo.getString("nickname"));
         String pic=(userInfo.getString("headimgurl"));
 
+        //通过openID查询是否为第一次登录
         User user =  userService.WeChatLoginByOpenid(openid);
+        //微信注册成功标识符 1是，0否
         Integer flag=0;
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String loginTime = simpleDateFormat.format(new Date());
+
+        //注册用户对象
         User userRegister = new User();
+        //第一次微信登录
        if (user==null){
            //获得文件名，这个新的文件名需要保存到数据库
            String fileName = UUID.randomUUID().toString() + ".jpg";
@@ -99,18 +106,27 @@ public class WechatSelvlet extends BaseServlet {
            flag = userService.userRegister(userRegister);
 
        }
+       //已经微信登录过直接跳转首页
        else {
+           //更新登录时间
            user.setLoginTime(loginTime);
+           //创建用户session
            HttpSession session = request.getSession();
            session.setAttribute(SysConstant.SESSION_LOGIN_CHECK,user);
-           response.sendRedirect("/html/comment/home.jsp");
            userService.loginTimeUpdate(user);
+           request.getRequestDispatcher("/html/comment/home.jsp").forward(request,response);
+
        }
+       //注册成功后，跳转
        if (flag==1){
+           //获取注册后的用户资料
+           User userlogin =  userService.WeChatLoginByOpenid(openid);
+
            HttpSession session = request.getSession();
-           session.setAttribute(SysConstant.SESSION_LOGIN_CHECK,userRegister);
-           response.sendRedirect("/html/comment/home.jsp");
+           session.setAttribute(SysConstant.SESSION_LOGIN_CHECK,userlogin);
+           //更新登录时间
            userService.loginTimeUpdate(userRegister);
+           request.getRequestDispatcher("/html/comment/home.jsp").forward(request,response);
        }
     }
 }

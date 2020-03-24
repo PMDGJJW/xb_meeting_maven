@@ -49,4 +49,13 @@ public class DeptService {
         public List<Dept> deptListAll(){
                 return deptDao.deptListAll();
         }
+
+        /*
+         * @Description 查询部门名称
+         * @author jian j w
+         * @date 2020/3/22
+         */
+        public List<Dept> deptNameList(){
+            return deptDao.deptNameList();
+        }
 }

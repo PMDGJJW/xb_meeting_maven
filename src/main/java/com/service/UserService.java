@@ -46,6 +46,15 @@ public class UserService {
         return userDao.userlogin(user);
     }
 
+    /*
+     * @Description 用户姓名集合
+     * @author jian j w
+     * @date 2020/3/22
+     */
+    public List<User> userNameList(Integer deptID){
+        return userDao.userNameList(deptID);
+    }
+
     //用户登录修改登录时间
     public void loginTimeUpdate(User user){
         //获取当前时间作为登录时间
@@ -100,13 +109,13 @@ public class UserService {
     }
 
     //用户管理
-    public List<User> userList(User user,Page page){
-       return userDao.userList(user,page);
+    public List<User> userList(User user,Page page,String minage ,String maxage){
+       return userDao.userList(user,page,minage,maxage);
     }
 
     //分页总记录数
-    public Integer count(User user){
-        return  userDao.count(user);
+    public Integer count(User user,String minage,String maxage){
+        return  userDao.count(user,minage,maxage);
     }
 
     //用户头像
@@ -124,7 +133,7 @@ public class UserService {
         return userDao.updateUserDetail(user);
     }
 
-    //微信或QQ登录头像处理
+    //微信或QQ登录头像处理保存到服务器
     public void wxHeadImg(String pic,String imgstr){
 
         try {
@@ -139,7 +148,7 @@ public class UserService {
             httpURLConnection.setConnectTimeout(5000);
             // ----通过输入流获取图片数据
             BufferedInputStream inputStream = new BufferedInputStream(httpURLConnection.getInputStream());
-
+            //图片保存到服务器路径
             String imgBase = SysConstant.SYS_USER_IMGBASE;
             FileOutputStream fos = new FileOutputStream(imgBase+imgstr);
             int len = 0;
@@ -338,6 +347,6 @@ public class UserService {
      * @date 2020/3/21
      */
     public User QQLoginByOpenid(String qq_openid  ){
-        return userDao.WeChatLoginByOpenid(qq_openid);
+        return userDao.QQLoginByOpenid(qq_openid);
     }
 }

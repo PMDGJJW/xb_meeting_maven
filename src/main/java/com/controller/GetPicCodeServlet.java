@@ -33,7 +33,14 @@ public class GetPicCodeServlet extends BaseServlet {
     //注入UserService
     private UserService userService = new UserService();
 
-    //登录验证码
+    /**
+     * @Description 创建登录验证码
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void getPic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //验证码生成工具类
         ImgCodeUtil imgCodeUtil = new ImgCodeUtil();
@@ -62,11 +69,23 @@ public class GetPicCodeServlet extends BaseServlet {
         sos.close();
     }
 
-    //获得用户头像
+    /**
+     * @Description 获得用户头像
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void userImage (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        //服务器存储图片路径
         String imageBase = SysConstant.SYS_USER_IMGBASE;
+        //用户头像路径
         String picStr = request.getParameter("pic");
+        //拼接完整路径
         String pic = imageBase+picStr;
+
+        //文件流
         File file = new File(pic);
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         OutputStream os = response.getOutputStream();
@@ -84,7 +103,14 @@ public class GetPicCodeServlet extends BaseServlet {
         bis.close();
     }
 
-    //上传头像到服务器
+    /**
+     * @Description 上传头像到服务器更换头像
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void uploadHeadImg (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         //为解析类提供配置信息 创建文件上传工厂类
         DiskFileItemFactory factory = new DiskFileItemFactory();

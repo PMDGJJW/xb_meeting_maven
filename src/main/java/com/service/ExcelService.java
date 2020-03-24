@@ -33,7 +33,7 @@ public class ExcelService {
      * @author jian j w
      * @date 2020/3/20
      */
-        public Workbook dowLoadXml(String username){
+        public Workbook dowLoadXml(String username,String minage,String maxage){
             Workbook wb = new HSSFWorkbook();
             //sheet名称
             Sheet sheet = wb.createSheet("用户信息列表");
@@ -44,7 +44,7 @@ public class ExcelService {
                 headerRow.createCell(i).setCellValue(SysConstant.headers[i]);
             }
 
-            List<User> list = excelDao.dowLoadXml(username);
+            List<User> list = excelDao.dowLoadXml(username,minage,maxage);
             Row row;
             for (int i = 0; i < list.size(); i++) {
 
@@ -54,9 +54,9 @@ public class ExcelService {
                 row.createCell(1).setCellValue(list.get(i).getRealName() == null ? "" : list.get(i).getRealName());
                 String gender = "";
                 if (list.get(i).getGender() != null||list.get(i).getGender() != "") {
-                    if (list.get(i).getGender() == "1") {
+                    if ("1".equals(list.get(i).getGender())) {
                         gender = "男";
-                    } else if (list.get(i).getGender() == "0") {
+                    } else if ("0".equals(list.get(i).getGender())) {
                         gender = "女";
                     }
                 }

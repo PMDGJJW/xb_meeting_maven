@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * @auth jian j w
  * @date 2020/3/17 18:20
- * @Description
+ * @Description 用户
  */
 @WebServlet("/user/*")
 public class UserServlet extends BaseServlet {
@@ -37,7 +37,14 @@ public class UserServlet extends BaseServlet {
     //注入DeptServlet
     private DeptService deptService = new DeptService();
 
-    //登录
+    /**
+     * @Description 登录
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         //获取表单域提交的值
@@ -94,10 +101,19 @@ public class UserServlet extends BaseServlet {
     }
 
 
-    //用户名验证
+    /**
+     * @Description 用户名验证
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void checkUsername(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         String username = request.getParameter("username");
+        //是否存在重复
         User result = userService.checkUsername(username);
+        //状态码写回 200没有重复，500重复
         PrintWriter out = response.getWriter();
         if (result==null){
             out.write("200");
@@ -107,10 +123,19 @@ public class UserServlet extends BaseServlet {
         }
     }
 
-    //用户邮箱验证
+    /**
+     * @Description 用户邮箱验证
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void checkEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         String email = request.getParameter("email");
+        //是否存在重复
         User result = userService.checkEmail(email);
+        //状态码写回 200没有重复，500重复
         PrintWriter out = response.getWriter();
         if (result==null){
             out.write("200");
@@ -120,10 +145,18 @@ public class UserServlet extends BaseServlet {
         }
     }
 
-    //用户注册
+    /**
+     * @Description 用户注册
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void userRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         Map<String, String[]> map = request.getParameterMap();
         User user = new User();
+
         try {
             BeanUtils.populate(user,map);
         } catch (IllegalAccessException e) {
@@ -131,9 +164,11 @@ public class UserServlet extends BaseServlet {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+        //密码MD5加密
         String password = request.getParameter("password");
         password=MdUtil.md5(password);
         user.setPassword(password);
+
         //获取是否注册成功标识码
         Integer registeflag = userService.userRegister(user);
         if (registeflag==1){
@@ -144,10 +179,19 @@ public class UserServlet extends BaseServlet {
 
     }
 
-    //用户详情
+    /**
+     * @Description 用户详情
+     * @author jian j w
+     * @date 2020/3/17
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void userDetail (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        //当前用户id
         String id = request.getParameter("id");
         User user = userService.userDetail(Integer.valueOf(id));
+        //用户数据
         List<Dept> depts = deptService.deptListAll();
         request.setAttribute("user",user);
         request.setAttribute("depts",depts);
@@ -155,6 +199,7 @@ public class UserServlet extends BaseServlet {
     }
 
     //用户信息修改
+
     protected void userDetailUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 
         String id = request.getParameter("id");
@@ -194,6 +239,7 @@ public class UserServlet extends BaseServlet {
      */
     protected void logOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         Cookie [] cookie = request.getCookies();
+        //设置cookie的有效期
         for (int i = 0; i <cookie.length ; i++) {
             if (SysConstant.COOKIE_LOGIN_USER.equals(cookie[i].getName())) {
                 cookie[i].setPath("/");
@@ -201,6 +247,7 @@ public class UserServlet extends BaseServlet {
                 response.addCookie(cookie[i]);
             }
         }
+        //使session失效
         HttpSession session = request.getSession();
         session.removeAttribute(SysConstant.SESSION_LOGIN_CHECK);
         response.sendRedirect("/index.jsp");
@@ -226,6 +273,7 @@ public class UserServlet extends BaseServlet {
         }
         user.setUsername(username);
         user.setEmail(email);
+        //检测该邮箱是否为用户的注册邮箱 ，状态码：200不是，500是
         String flag = userService.usernameEmailCheck(user);
         PrintWriter out = response.getWriter();
         if (flag=="200"){
@@ -244,9 +292,12 @@ public class UserServlet extends BaseServlet {
      */
     protected void sendEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         String email = request.getParameter("email");
+        //获取验证码
         String checktoken = userService.sendEmail(email);
+
         PrintWriter out = response.getWriter();
         if (checktoken.length()==6){
+            //设置验证码session 有效期180s
             HttpSession session = request.getSession();
             session.setAttribute(SysConstant.SEND_EMAIL_TOKEN,checktoken);
             session.setMaxInactiveInterval(60*3);
@@ -257,13 +308,28 @@ public class UserServlet extends BaseServlet {
             out.write("500");
         }
     }
-
+    /**
+     * @Description 用户输入验证码后校验是否正确
+     * @author jian j w
+     * @date 2020/3/21
+     * @param request
+     * @param response
+     * @return void
+     */
     protected void checkCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        //获取验证码session
         HttpSession session = request.getSession();
         Object obg =  session.getAttribute(SysConstant.SEND_EMAIL_TOKEN);
         String code = obg.toString();
-        String checkCode = request.getParameter("code");
         PrintWriter writer = response.getWriter();
+        //是否验证码失效了
+        if (code==null){
+            writer.write("500");
+            return;
+        }
+        //获取用户输入的验证码
+        String checkCode = request.getParameter("code");
+        //前端返回状态码 200正确,500错误
         if (!code.equals(checkCode)){
             writer.write("500");
         }else {

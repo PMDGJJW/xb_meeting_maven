@@ -15,7 +15,7 @@ import java.util.Properties;
 /**
  * @auth jian j w
  * @date 2020/3/21 14:10
- * @Description
+ * @Description QQ登录
  */
 @WebServlet("/qq/*")
 public class QQServlet extends BaseServlet{

@@ -19,6 +19,8 @@
         <div style="float: left">
             <form action="/html/manage/userList" method="post">
                 <input type="text" name="username" value="${username}" class="form-control" placeholder="用户名" style="width: 150px;float: left">
+                <input type="text" name="minage" value="${minage}" class="form-control" placeholder="最小年龄" style="width: 150px;float: left">
+                <input type="text" name="maxage" value="${maxage}" class="form-control" placeholder="最大年龄" style="width: 150px;float: left">
                 <input type="submit" class="btn btn-primary" value="查询">
             </form>
         </div>
@@ -27,7 +29,7 @@
                 <input type="file" name="userExcel">
                 <input type="submit" class="btn btn-primary" value="上传">
             </form>
-                <a href="/xml/dowLoadXml?username=${username}" class="btn btn-info">导出为Exl</a>
+                <a href="/xml/dowLoadXml?username=${username}&minage=${minage}&maxage=${maxage}" class="btn btn-info">导出为Exl</a>
                 <a href="/xml/xmlTemplate" class="btn btn-success">下载上传模板</a>
         </div>
         <table class="table deptDetail">
@@ -62,10 +64,10 @@
                 </tr>
             </c:forEach>
         </table>
-        <a href="/html/manage/userList?pagecurrent=1&username=${username}">首页</a>
-        <a href="/html/manage/userList?pagecurrent=${page.pagecurrent-1<=0?1:page.pagecurrent-1}&username=${username}">上一页</a>
-        <a href="/html/manage/userList?pagecurrent=${page.pagecurrent+1>=page.pagecount?page.pagecount:page.pagecurrent+1}&username=${username}">下一页</a>
-        <a href="/html/manage/userList?pagecurrent=${page.pagecount}&username=${username}">末页</a>
+        <a href="/html/manage/userList?pagecurrent=1&username=${username}&minage=${minage}&maxage=${maxage}">首页</a>
+        <a href="/html/manage/userList?pagecurrent=${page.pagecurrent-1<=0?1:page.pagecurrent-1}&username=${username}&minage=${minage}&maxage=${maxage}">上一页</a>
+        <a href="/html/manage/userList?pagecurrent=${page.pagecurrent+1>=page.pagecount?page.pagecount:page.pagecurrent+1}&username=${username}&minage=${minage}&maxage=${maxage}">下一页</a>
+        <a href="/html/manage/userList?pagecurrent=${page.pagecount}&username=${username}&minage=${minage}&maxage=${maxage}">末页</a>
         <span>总页数:${page.pagecount}</span>
         <span>当前页:${page.pagecurrent}</span>
     </div>

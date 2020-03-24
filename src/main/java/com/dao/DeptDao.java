@@ -95,9 +95,28 @@ public class DeptDao extends BaseDao{
         }
     }
 
-    //部门集合
+    /*
+     * @Description 部门集合
+     * @author jian j w
+     * @date 2020/3/22
+     */
     public List<Dept> deptListAll(){
-        String sql ="select * from dept";
-       return template.query(sql,new BeanPropertyRowMapper<>(Dept.class));
+        try {
+            String sql ="select * from dept";
+            return template.query(sql,new BeanPropertyRowMapper<>(Dept.class));
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /*
+     * @Description 查询部门名称与ID
+     * @author jian j w
+     * @date 2020/3/22
+     */
+    public List<Dept> deptNameList(){
+        String sql = "select id,name from dept";
+        return template.query(sql,new BeanPropertyRowMapper<>(Dept.class));
     }
 }

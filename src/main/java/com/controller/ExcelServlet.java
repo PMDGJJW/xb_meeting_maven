@@ -41,11 +41,16 @@ public class ExcelServlet extends BaseServlet {
      */
 
     protected void dowLoadXml(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-
+        //用户名
         String username=request.getParameter("username");
+        //最小年龄
+        String minage=request.getParameter("minage");
+        //最大年龄
+        String maxage=request.getParameter("maxage");
+
         username=username==null?"":username;
 
-        Workbook wb = excelService.dowLoadXml(username);
+        Workbook wb = excelService.dowLoadXml(username,minage,maxage);
         String fileName = "用户列表Excel.xls";
         //必要头
         response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("utf-8"), "iso-8859-1"));
@@ -83,7 +88,6 @@ public class ExcelServlet extends BaseServlet {
      * @param response
      * @return void
      */
-
     protected void upLoadXml(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         //核心Api
         FileItemFactory factory = new DiskFileItemFactory();
@@ -124,7 +128,7 @@ public class ExcelServlet extends BaseServlet {
                     System.out.println(fieldName + ":" + fieldValue);
                 }
             }
-
+            //标识成功码
             Integer flag = 0;
             for (int i = 0; i <list.size(); i++) {
                 User user = list.get(i);

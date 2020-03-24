@@ -6,11 +6,17 @@ package com.entity;
  * @Description
  */
 public class Menu {
+    //目录ID
     private Integer id;
+    //目录归属ID
     private Integer PId;
+    //目录名称
     private String name;
+    //url
     private String url;
+    //目录类型
     private Integer type;
+    //排序
     private Integer orderBy;
 
     public Integer getId() {
